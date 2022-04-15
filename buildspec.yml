@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+    variables:
+        NODE_ENV: production
+    parameter-store:
+        VITE_SLP_SPOTIFY_CLIENT_ID: 'slp-prod-spotify-client-id'
+        VITE_SLP_API_URL: 'slp-prod-api-url'
+        VITE_SLP_APP_URL: 'slp-prod-app-url'
+        DEPLOYMENT_S3_BUCKET: 'slp-prod-app-deployment-bucket'
+
+phases:
+    install:
+        on-failure: ABORT
+        runtime-versions:
+            nodejs: 14
+        commands:
+            - npm install
+    build:
+        on-failure: ABORT
+        commands:
+            - export VITE_SLP_SPOTIFY_CLIENT_ID=$VITE_SLP_SPOTIFY_CLIENT_ID
+            - export VITE_SLP_API_URL=$VITE_SLP_API_URL
+            - export VITE_SLP_APP_URL=$VITE_SLP_APP_URL
+            - npm run build
+            - aws s3 cp build s3://$DEPLOYMENT_S3_BUCKET/ --recursive
