@@ -15,12 +15,13 @@ phases:
         runtime-versions:
             nodejs: 14
         commands:
-            - npm install
+            - npm install --global yarn
+            - yarn install --production=false
     build:
         on-failure: ABORT
         commands:
             - export VITE_SLP_SPOTIFY_CLIENT_ID=$VITE_SLP_SPOTIFY_CLIENT_ID
             - export VITE_SLP_API_URL=$VITE_SLP_API_URL
             - export VITE_SLP_APP_URL=$VITE_SLP_APP_URL
-            - npm run build
-            - aws s3 cp build s3://$DEPLOYMENT_S3_BUCKET/ --recursive
+            - yarn build
+            - aws s3 cp dist s3://$DEPLOYMENT_S3_BUCKET/ --recursive
